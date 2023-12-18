@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 from GlyphsApp.plugins import *
+import math
 
 class AlignmentZoneSizes(ReporterPlugin):
 	
@@ -26,19 +27,41 @@ class AlignmentZoneSizes(ReporterPlugin):
 		return False
 
 	@objc.python_method
-	def foreground(self, layer):
+	def foregroundInViewCoords(self):
 
 		if not self.conditionsAreMetForDrawing():
 			return
 
+		layer = self.controller.graphicView().activeLayer()
 		thisMaster = layer.master
 
-		drawDark = self.controller.graphicView().drawDark()
-		color = Glyphs.colorDefaults['GSColorZonesDark'] if drawDark else: Glyphs.colorDefaults['GSColorZones']
-		fontcolor = color_for_light_appearance.colorWithAlphaComponent_(1)
+		if self.black:
+			color = Glyphs.colorDefaults['GSColorZonesDark']
+		else:
+			color = Glyphs.colorDefaults['GSColorZones']
+		fontcolor = color.colorWithAlphaComponent_(1)
+		activePosition = self.controller.graphicView().activePosition()
+		italicAngle = layer.italicAngle
+		transform = None
+		scale = self._scale
+		if abs(italicAngle) > 0.001:
+			transform = NSAffineTransform.new()
+			slant = math.tan(math.radians(italicAngle))
+			transform.shearXBy_atCenter_(slant, layer.slantHeight())
 
 		# For each alignment zone in the current master
 		for zone in thisMaster.alignmentZones:
 			# Get alignment zone position + its size
-			self.drawTextAtPoint(str(zone.size), NSPoint(-10, zone.position), 10, fontcolor, align="right")
-		
+			pos = NSMakePoint(-4, zone.position)
+			
+			if transform:
+				pos = transform.transformPoint_(pos)
+
+			pos.x = pos.x * scale + activePosition.x
+			pos.y = pos.y * scale + activePosition.y
+			if zone.size > 0:
+				pos.y += 4
+			else:
+				pos.y -= 3
+			string = NSString.stringWithString_(str(int(zone.size)))
+			string.drawAtPoint_color_alignment_handleSize_(pos, fontcolor, 5, -1)
