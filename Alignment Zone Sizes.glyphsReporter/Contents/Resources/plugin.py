@@ -31,9 +31,7 @@ class AlignmentZoneSizes(ReporterPlugin):
 		if not self.conditionsAreMetForDrawing():
 			return
 
-		Font = Glyphs.font
-		# Set the variable of current master
-		thisMaster = Font.selectedFontMaster
+		thisMaster = layer.master
 
 		# For each alignment zone in the current master
 		for zone in thisMaster.alignmentZones:
