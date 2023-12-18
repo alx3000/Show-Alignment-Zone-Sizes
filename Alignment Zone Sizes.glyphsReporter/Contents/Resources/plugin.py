@@ -33,12 +33,12 @@ class AlignmentZoneSizes(ReporterPlugin):
 
 		thisMaster = layer.master
 
+		drawDark = self.controller.graphicView().drawDark()
+		color = Glyphs.colorDefaults['GSColorZonesDark'] if drawDark else: Glyphs.colorDefaults['GSColorZones']
+		fontcolor = color_for_light_appearance.colorWithAlphaComponent_(1)
+
 		# For each alignment zone in the current master
 		for zone in thisMaster.alignmentZones:
-
-			color_for_light_appearance = Glyphs.colorDefaults['GSColorZones']
-			color_for_dark_appearance = Glyphs.colorDefaults['GSColorZonesDark']
-			fontcolor = color_for_light_appearance.colorWithAlphaComponent_(1)
 			# Get alignment zone position + its size
 			self.drawTextAtPoint(str(zone.size), NSPoint(-10, zone.position), 10, fontcolor, align="right")
 		
