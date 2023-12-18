@@ -28,18 +28,19 @@ class AlignmentZoneSizes(ReporterPlugin):
 	@objc.python_method
 	def foreground(self, layer):
 
+		if not self.conditionsAreMetForDrawing():
+			return
+
 		Font = Glyphs.font
 		# Set the variable of current master
 		thisMaster = Font.selectedFontMaster
 
-		if self.conditionsAreMetForDrawing():
+		# For each alignment zone in the current master
+		for zone in thisMaster.alignmentZones:
 
-			# For each alignment zone in the current master
-			for zone in thisMaster.alignmentZones:
-
-				color_for_light_appearance = Glyphs.colorDefaults['GSColorZones']
-				color_for_dark_appearance = Glyphs.colorDefaults['GSColorZonesDark']
-				fontcolor = color_for_light_appearance.colorWithAlphaComponent_(1)
-				# Get alignment zone position + its size
-				self.drawTextAtPoint(str(zone.size), NSPoint(-10, zone.position), 10, fontcolor, align="right")
-			
+			color_for_light_appearance = Glyphs.colorDefaults['GSColorZones']
+			color_for_dark_appearance = Glyphs.colorDefaults['GSColorZonesDark']
+			fontcolor = color_for_light_appearance.colorWithAlphaComponent_(1)
+			# Get alignment zone position + its size
+			self.drawTextAtPoint(str(zone.size), NSPoint(-10, zone.position), 10, fontcolor, align="right")
+		
