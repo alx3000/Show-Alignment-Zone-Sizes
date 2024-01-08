@@ -63,5 +63,11 @@ class AlignmentZoneSizes(ReporterPlugin):
 				pos.y += 4
 			else:
 				pos.y -= 3
-			string = NSString.stringWithString_(str(int(zone.size)))
+
+			string = NSString.stringWithString_(str(int(zone.size)) )
+			string2 = NSString.stringWithString_(str(int(zone.position)) )
+			
 			string.drawAtPoint_color_alignment_handleSize_(pos, fontcolor, 5, -1)
+			
+			pos.x = pos.x -15
+			string2.drawAtPoint_color_alignment_handleSize_(pos, fontcolor, 5, -1)
